@@ -1,5 +1,6 @@
 import { cart, addtocart } from '../cart.js';
 import { products } from '../data/products.js';
+import { saveToStorage } from './cart.js';
 let productHtml = "";
 products.forEach((product) => {
   productHtml += ` <div class="product-container">
@@ -65,8 +66,6 @@ function updateCartTotal() {
 
 
 
-
-
 document.querySelector(".js-product-con").innerHTML += productHtml;
 
 const cartButtons = document.querySelectorAll(".js-cart-btn");
@@ -80,6 +79,7 @@ cartButtons.forEach((button) => {
     addtocart(productId, button);
 
     updateCartTotal();
+    
 
 
   })
