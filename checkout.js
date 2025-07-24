@@ -1,7 +1,7 @@
 import { cart, addtocart, removeFromCart } from '../cart.js';
-import {products} from '../data/products.js';
+import { products } from '../data/products.js';
 import { formatMoney } from '../styles/shared/util/money.js';
-import { deliveryOptions } from './styles/shared/util/deliveryOptions.js';  
+import { deliveryOptions } from './styles/shared/util/deliveryOptions.js';
 
 
 
@@ -10,22 +10,33 @@ let checkoutHtml = "";
 
 
 cart.forEach((cartItem) => {
-    
+
   let matchingProduct;
   const productId = cartItem.productId;
-  
+
   products.forEach((product) => {
     if (product.id === productId) {
-        
+
       matchingProduct = product;
-     
-  
     }
-    });
-        checkoutHtml +=
+  });
+
+
+  let deliveryId = cartItem.deliveryOptionId;
+  let deliveryOption;
+  deliveryOptions.forEach((option) => {
+    if (option.id === deliveryId) {
+      deliveryOption = option;
+    }
+
+  });
+  const today = dayjs();
+  const deliverDate = today.add(deliveryOption.date, 'days');
+  const dateString = deliverDate.format('dddd, MMMM D');
+  checkoutHtml +=
     `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
-              Delivery date: Tuesday, June 21
+              Delivery date: ${dateString} 
             </div>
 
             <div class="cart-item-details-grid">
@@ -62,44 +73,44 @@ cart.forEach((cartItem) => {
             </div>
           </div>`;
 
- 
 
-          
+
+
 });
 
 document.querySelector(".order-summary  ").innerHTML = checkoutHtml;
 
-         document.querySelectorAll('.js-delete-links').forEach((link) => {
-            link.addEventListener("click", () => {
-                console.log('clicked');
-                const productId = link.dataset.productId;
-              
-                removeFromCart(productId);
-                
-                // Remove the cart item container from the DOM
-                const container = document.querySelector(`.js-cart-item-container-${productId}`);
-                container.remove();
+document.querySelectorAll('.js-delete-links').forEach((link) => {
+  link.addEventListener("click", () => {
+    console.log('clicked');
+    const productId = link.dataset.productId;
+
+    removeFromCart(productId);
+
+    // Remove the cart item container from the DOM
+    const container = document.querySelector(`.js-cart-item-container-${productId}`);
+    container.remove();
 
 
-       
-                console.log(cart);
-            });
-          });
 
-          function deliveryOptionHtml(matchingProduct, cartItem){
-            
-            let deliveryOptionHtml = "";
+    console.log(cart);
+  });
+});
+
+function deliveryOptionHtml(matchingProduct, cartItem) {
+
+  let deliveryOptionHtml = "";
 
 
-  deliveryOptions.forEach((options) =>{
+  deliveryOptions.forEach((options) => {
     const today = dayjs();
-            const deliverDate = today.add(options.date, 'days');
-            const dateString = deliverDate.format('dddd, MMMM D');
-            const priceCents = options.price === 0 ? "FREE" : `$${formatMoney(options.price)}`;
-            const isChecked = options.id === cartItem.deliveryOptionId;
-            
+    const deliverDate = today.add(options.date, 'days');
+    const dateString = deliverDate.format('dddd, MMMM D');
+    const priceCents = options.price === 0 ? "FREE" : `$${formatMoney(options.price)}`;
+    const isChecked = options.id === cartItem.deliveryOptionId;
+
     deliveryOptionHtml += `<div class="delivery-option ">
-                  <input type="radio" ${isChecked ?'checked' :''}
+                  <input type="radio" ${isChecked ? 'checked' : ''}
                     class="delivery-option-input"
                     name="delivery-option-${matchingProduct.id}">
                   <div>
@@ -112,11 +123,11 @@ document.querySelector(".order-summary  ").innerHTML = checkoutHtml;
                   </div>
                 </div>`
   });
-            
-            return deliveryOptionHtml;
-          
-          
-          
+
+  return deliveryOptionHtml;
+
+
+
 }
 
 
