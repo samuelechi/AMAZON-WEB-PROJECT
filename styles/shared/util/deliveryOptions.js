@@ -1,14 +1,14 @@
 export const deliveryOptions = [{
     id: 1,
-    date: "Tuesday, June 21",
+    date: 7,
     price: 0,
 }, {
     id: 2,
-    date: "Wednesday, June 15",
+    date: 3,
     price: 499,
 }, {
     id: 3,
-    date: "Monday, June 13",
+    date: 1,
     price: 999,
 }];                 
 

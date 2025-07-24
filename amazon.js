@@ -77,7 +77,6 @@ cartButtons.forEach((button) => {
   
 
     addtocart(productId, button);
-
     updateCartTotal();
     
 
