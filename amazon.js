@@ -1,4 +1,4 @@
-import { cart, addtocart } from '../cart.js';
+import { cart, addToCart } from '../cart.js';
 import { products } from '../data/products.js';
 import { saveToStorage } from './cart.js';
 let productHtml = "";
@@ -76,7 +76,7 @@ cartButtons.forEach((button) => {
 
   
 
-    addtocart(productId, button);
+    addToCart(productId, button);
     updateCartTotal();
     
 

@@ -1,10 +1,10 @@
-import { cart, addtocart, removeFromCart } from '../cart.js';
+import { cart, addToCart, removeFromCart, updateDeliveryOption } from '../cart.js';
 import { products } from '../data/products.js';
 import { formatMoney } from '../styles/shared/util/money.js';
 import { deliveryOptions } from './styles/shared/util/deliveryOptions.js';
 
 
-
+function renderOrderSummary(){
 
 let checkoutHtml = "";
 
@@ -22,17 +22,21 @@ cart.forEach((cartItem) => {
   });
 
 
-  let deliveryId = cartItem.deliveryOptionId;
-  let deliveryOption;
-  deliveryOptions.forEach((option) => {
-    if (option.id === deliveryId) {
-      deliveryOption = option;
-    }
+const deliveryOptionId = cartItem.deliveryOptionId;
+let deliveryOption = deliveryOptions.find(option => option.id === deliveryOptionId);
 
-  });
+// Fallback if not found
+if (!deliveryOption) {
+  deliveryOption = deliveryOptions[0]; // default first delivery option
+  cartItem.deliveryOptionId = deliveryOption.id; // optionally fix cartItem
+}
+
   const today = dayjs();
   const deliverDate = today.add(deliveryOption.date, 'days');
   const dateString = deliverDate.format('dddd, MMMM D');
+  const priceCents = deliveryOption.price === 0 ? "FREE" : `$${formatMoney(deliveryOption.price)}`;
+
+
   checkoutHtml +=
     `<div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
@@ -109,10 +113,12 @@ function deliveryOptionHtml(matchingProduct, cartItem) {
     const priceCents = options.price === 0 ? "FREE" : `$${formatMoney(options.price)}`;
     const isChecked = options.id === cartItem.deliveryOptionId;
 
-    deliveryOptionHtml += `<div class="delivery-option ">
+    deliveryOptionHtml += `<div class="delivery-option js-checked-option"  >
                   <input type="radio" ${isChecked ? 'checked' : ''}
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingProduct.id}">
+                    class="delivery-option-input js-delivery-option-input"
+                    name="delivery-option-${matchingProduct.id}"
+                      data-product-id="${matchingProduct.id}"
+    data-delivery-option-id="${options.id}">
                   <div>
                     <div class="delivery-option-date">
                       ${dateString}
@@ -126,9 +132,22 @@ function deliveryOptionHtml(matchingProduct, cartItem) {
 
   return deliveryOptionHtml;
 
-
-
 }
+
+document.querySelectorAll('.js-delivery-option-input').forEach((element) => {
+  element.addEventListener("click", () => {
+     const { productId, deliveryOptionId } = element.dataset;
+    updateDeliveryOption(productId, deliveryOptionId);
+
+  });
+});
+}
+
+
+
+
+
+     
 
 
 
