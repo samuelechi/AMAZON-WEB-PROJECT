@@ -1,4 +1,7 @@
-export let cart = JSON.parse(localStorage.getItem("cart"));
+export let cart;
+loadCartFromStorage();
+function loadCartFromStorage() {
+cart = JSON.parse(localStorage.getItem("cart"));
 if (!cart) {
     cart = [{
         productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -11,13 +14,14 @@ if (!cart) {
         deliveryOptionId: '2'
 }];
 }
-   export function saveToStorage(){
+}
+            
+          export function saveToStorage(){
            localStorage.setItem('cart', JSON.stringify(cart));
             
           }
-export function addToCart(productId, button) {
-                const parentCon = button.closest(".product-container");
-                const dropDown = parentCon.querySelector(".drop-down");
+export function addToCart(productId) {
+                const dropDown = document.querySelector(".drop-down");
                 const seclectValue = Number(dropDown.value);
                 let matchedProduct;
                 cart.forEach((item) => {
@@ -67,4 +71,34 @@ export function updateDeliveryOption(productId, deliveryOptionId){
     saveToStorage();
 
 }
- 
+
+export function updateCartCheckout(productId, dropdown) {
+  const selectedValue = Number(dropdown.value);
+
+  let matchedProduct = cart.find(item => item.productId === productId);
+
+  if (matchedProduct) {
+    matchedProduct.quantity = selectedValue; // Use = not += to **set**, not add more
+  } else {
+    cart.push({
+      productId: productId,
+      quantity: selectedValue,
+      deliveryOptionId: 1
+    });
+  }
+
+  saveToStorage();
+}
+
+
+export function loadCart(fun) {
+  const xhr = new XMLHttpRequest();
+
+  xhr.addEventListener('load', () => {
+    console.log(xhr.response);
+    fun();
+  });
+
+  xhr.open('GET', 'https://supersimplebackend.dev/cart');
+  xhr.send();
+}

@@ -1,6 +1,10 @@
 import { cart, addToCart } from '../cart.js';
-import { products } from '../data/products.js';
+import {Cart} from '../cart-oop.js';
 import { saveToStorage } from './cart.js';
+import {products, loadProducts} from '../data/products.js';
+
+loadProducts(renderProductsGrid);
+function renderProductsGrid() {
 let productHtml = "";
 products.forEach((product) => {
   productHtml += ` <div class="product-container">
@@ -60,6 +64,8 @@ function updateCartTotal() {
   cart.forEach((item) => {
     cartTotal += item.quantity;
   });
+  // Update the cart total in the UI
+
   console.log(cartTotal);
   document.querySelector(".js-cart-total").innerText = cartTotal;
 }
@@ -78,11 +84,14 @@ cartButtons.forEach((button) => {
 
     addToCart(productId, button);
     updateCartTotal();
+    saveToStorage();
+   
     
 
 
   })
 
 });
+}
 
 

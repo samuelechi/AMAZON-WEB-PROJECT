@@ -1,7 +1,9 @@
-import { cart, addToCart, removeFromCart, updateDeliveryOption} from '../cart.js';
+import { cart, addToCart, removeFromCart, updateDeliveryOption, saveToStorage, updateCartCheckout} from '../cart.js';
 import { products } from '../data/products.js';
 import { formatMoney } from '../styles/shared/util/money.js';
 import { deliveryOptions } from './styles/shared/util/deliveryOptions.js';
+import {renderPaymentSummary} from './renderPaymentSummary.js';
+
 export function renderOrderSummary(){
 
 let checkoutHtml = "";
@@ -57,8 +59,21 @@ if (!deliveryOption) {
                   <span>
                     Quantity: <span class="quantity-label">${cartItem.quantity}</span>
                   </span>
-                  <span class="update-quantity-link link-primary">
-                    Update
+                  <span class="update-quantity-link link-primary js-update-links" data-product-id="${matchingProduct.id}">
+                         <select class="drop-down js-update-dropdown" data-product-id="${matchingProduct.id}">
+
+              <option selected value="0">Update</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
                   </span>
                   <span class="delete-quantity-link link-primary js-delete-links" data-product-id="${matchingProduct.id}">
                     Delete
@@ -89,9 +104,11 @@ document.querySelectorAll('.js-delete-links').forEach((link) => {
 
     removeFromCart(productId);
 
+
     // Remove the cart item container from the DOM
     const container = document.querySelector(`.js-cart-item-container-${productId}`);
     container.remove();
+    renderPaymentSummary(); // Update payment summary after removal
 
 
 
@@ -132,12 +149,38 @@ function deliveryOptionHtml(matchingProduct, cartItem) {
 
 }
 
+
 document.querySelectorAll('.js-delivery-option-input').forEach((element) => {
   element.addEventListener("click", () => {
      const { productId, deliveryOptionId } = element.dataset;
     updateDeliveryOption(productId, deliveryOptionId);
     renderOrderSummary(); // Re-render to update the summary with new delivery option
+    renderPaymentSummary(); // Update payment summary after delivery option change
+   
 
   });
 });
+
+document.querySelectorAll('.js-update-dropdown').forEach((dropdown) => {
+  dropdown.addEventListener("change", () => {
+    const productId = dropdown.dataset.productId;
+    updateCartCheckout(productId, dropdown);
+    renderOrderSummary();
+    renderPaymentSummary(); // Update payment summary after quantity change
+   
+    
+  });
+}); 
 }
+
+ 
+
+
+
+            
+                
+
+         
+
+
+
